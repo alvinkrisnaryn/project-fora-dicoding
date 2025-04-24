@@ -60,27 +60,44 @@ Proyek starter ini dirancang agar kode tetap modular dan terorganisir.
 ├── src/
 │   ├── public/
 │   │   └── images
+│   │   |   └── favicon.png
 │   │   |   └── logo.png
-│   │   └── favicon.png
 │   ├── scripts/
+│   │   └── componentes/
+│   │   |   └── navbar/
+│   │   |   |   └── navbar.js
+│   │   |   └── review-card/
+│   │   |   |   └── review-card.js
 │   │   └── data/
 │   │   |   └── api.js
+│   │   |   └── repository.js
 │   │   └── pages/
 │   │   |   └── about/
 │   │   |   |   └── about-page.js
+│   │   |   └── add/
+│   │   |   |   └── add-page.js
+│   │   |   └── detail/
+│   │   |   |   └── detail-page.js
 │   │   |   └── home/
 │   │   |   |   └── home-page.js
+│   │   |   └── login/
+│   │   |   |   └── login-page.js
 │   │   └── app.js
 │   │   └── routes/
 │   │   |   └── routes.js
 │   │   |   └── url-parser.js
 │   │   └── utils/
-│   │   |   └── index.js
+│   │   |   └── camera.js
+│   │   |   └── map.js
+│   │   |   └── utils.js
+│   │   |   └── validator.js
+│   │   |   └── view-transition.js
 │   │   └── config.js
 │   │   └── index.js
+│   │   └── main.js
 │   ├── styles/
 │   │   └── styles.css
-│   └── index.html/
+│   └── index.html
 ├── .gitignore
 ├── package-lock.json
 ├── package.json
