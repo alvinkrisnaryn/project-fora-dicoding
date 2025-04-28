@@ -4,8 +4,8 @@ const HomePage = {
   async render() {
     const token = localStorage.getItem("token");
     if (!token) {
-      window.location.href = "#/login";
-      return "<p>Redirectering...</p>";
+      window.location.replace("#/login"); // Gunakan replace untuk menghindari history stack
+      return ""; // Jangan tampilkan apa pun, biarkan App.renderPage menangani
     }
 
     return `
@@ -31,6 +31,7 @@ const HomePage = {
         return;
       }
 
+      storiesContainer.innerHTML = ""; // Kosongkan dulu untuk menghindari duplikasi
       stories.forEach((story) => {
         storiesContainer.innerHTML += `
           <div class="story-card">
