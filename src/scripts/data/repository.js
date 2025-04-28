@@ -25,21 +25,18 @@ export const registerUser = async (name, email, password) => {
 
 export const loginUser = async (email, password) => {
   try {
-    const response = await fetch(`${BASE_URL}/login`, {
+    const response = await fetch("https://story-api.dicoding.dev/v1/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
 
     const result = await response.json();
-
     if (!response.ok) {
       throw new Error(result.message || "Login gagal");
     }
-
     return result.loginResult.token; // <- token diambil dari hasil response
+    
   } catch (error) {
     console.error("Login error:", error);
     throw error;

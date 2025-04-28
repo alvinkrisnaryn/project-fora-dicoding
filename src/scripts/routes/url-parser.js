@@ -3,9 +3,7 @@ const UrlParser = {
     const urlSplit = this._urlSplitter(
       window.location.hash.slice(1).toLowerCase()
     );
-    console.log("URL Split:", urlSplit);
     if (!urlSplit.length) {
-      console.warn("No URL resource found, defaulting to home");
       return { resource: null, id: null, verb: null };
     }
 
@@ -19,7 +17,6 @@ const UrlParser = {
   parseActiveUrlWithCombiner() {
     const url = this.parseActiveUrl(); // Gunakan objek yang sudah diparsing
     const combined = this._urlCombiner(url);
-    console.log("Combined URL:", combined);
     return combined;
   },
 

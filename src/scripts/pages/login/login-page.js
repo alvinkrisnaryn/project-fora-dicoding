@@ -14,38 +14,50 @@ const LoginPage = {
   },
 
   async afterRender() {
-    const form = document.getElementById('loginForm');
-    const errorMessage = document.getElementById('error-message');
+    const form = document.getElementById("loginForm");
+    const errorMessage = document.getElementById("error-message");
 
-    form.addEventListener('submit', async (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
       try {
-        const response = await fetch('https://story-api.dicoding.dev/v1/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-        });
+        const response = await fetch(
+          "https://story-api.dicoding.dev/v1/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          }
+        );
 
         const result = await response.json();
+        console.log("Login Response:", result);
 
         if (!response.ok) {
           throw new Error(result.message);
         }
+        if (result && result.loginResult && result.loginResult.token) {
+          localStorage.setItem("token", result.loginResult.token);
+          localStorage.setItem("name", result.loginResult.name);
 
-        localStorage.setItem('token', result.loginResult.token);
-        localStorage.setItem('name', result.loginResult.name); // opsional
-        window.location.replace('#/home');
+          window.location.hash = "#/home";
+          setTimeout(() => {
+            const appModule = require("../app");
+            appModule.default.renderPage();
+          }, 100);
+        } else {
+          throw new Error("Login gagal: ${error.message}");
+        }
       } catch (error) {
         errorMessage.textContent = `Login gagal: ${error.message}`;
       }
     });
-  }
+  },
 };
 
 export default LoginPage;

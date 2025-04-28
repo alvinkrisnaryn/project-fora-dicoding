@@ -15,7 +15,6 @@ const App = {
 
     const routeKey = UrlParser.parseActiveUrlWithCombiner(); // untuk cocokkan ke routes
     if (routeKey === this.lastRoute) {
-      console.log("Same route, skipping render to avoid loop");
       return;
     }
     this.lastRoute = routeKey;
@@ -36,7 +35,6 @@ const App = {
     content.innerHTML = ""; // Kosongkan konten sebelum render
     try {
       content.innerHTML = await page.render();
-      console.log("Content rendered");
       await page.afterRender?.();
       console.log("After render executed");
     } catch (error) {
