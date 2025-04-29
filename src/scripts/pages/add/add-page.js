@@ -37,7 +37,7 @@ const AddPage = {
     const form = document.getElementById("storyForm");
     const message = document.getElementById("submit-message");
 
-    // ⬇️ Inisialisasi kamera saat halaman siap
+    // Inisialisasi kamera saat halaman siap
     await initCamera("camera");
 
     const fileInput = document.getElementById("photo");
@@ -70,41 +70,17 @@ const AddPage = {
       }
     });
 
-    // ⬇️ Tangani submit form
+    // Tangani submit form
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const description = document.getElementById("description").value;
       const filePhoto = document.getElementById("photo").files[0];
       const cameraPhoto = window.capturedPhotoBlob;
-
-      // ⛔ Validasi jika tidak ada gambar dari file maupun kamera
-      if (!filePhoto && !cameraPhoto) {
-        message.innerText = "Silakan upload gambar atau ambil dari kamera.";
-        return;
-      }
-
-      // ✅ Validasi jika dua-duanya dipakai, minta pilih salah satu
-      if (filePhoto && cameraPhoto) {
-        message.innerText =
-          "Pilih salah satu: upload file ATAU ambil dari kamera.";
-        return;
-      }
-
-      try {
-        await postStory(description, filePhoto || cameraPhoto);
-        message.innerText = "Berhasil mengirim review!";
-
-        stopCamera();
-
-        setTimeout(() => (window.location.href = "#/home"), 1500);
-      } catch (error) {
-        message.innerText = `Gagal mengirim review: ${error.message}`;
-      }
-
       const lat = document.getElementById("lat").value;
       const lon = document.getElementById("lon").value;
 
+      // Validasi input
       if (!lat || !lon) {
         message.innerText = "Silakan pilih lokasi pada peta.";
         return;
@@ -113,8 +89,13 @@ const AddPage = {
         message.innerText = "Silakan unggah gambar atau gunakan kamera.";
         return;
       }
+      if (filePhoto && cameraPhoto) {
+        message.innerText =
+          "Pilih salah satu: upload file ATAU ambil dari kamera.";
+        return;
+      }
 
-      // ✅ INI DIA: Buat FormData sebelum digunakan
+      // Buat FormData
       const formData = new FormData();
       formData.append("description", description);
       formData.append("photo", filePhoto || cameraPhoto);
@@ -122,13 +103,32 @@ const AddPage = {
       formData.append("lon", lon);
 
       try {
-        await postStoryWithLocation(formData); // kamu bisa buat fungsi baru atau modifikasi yang lama
+        await postStoryWithLocation(formData);
         message.innerText = "Berhasil mengirim review!";
-        stopCamera();
-        setTimeout(() => (window.location.href = "#/home"), 1500);
+        stopCamera(); // Hentikan kamera sebelum navigasi
+        const previewImg = document.getElementById("preview-img");
+        if (previewImg.src) {
+          URL.revokeObjectURL(previewImg.src); // Bersihkan URL
+          previewImg.src = "";
+          previewImg.style.display = "none";
+        }
+        setTimeout(() => {
+          window.location.href = "#/home";
+        }, 1500);
       } catch (error) {
         message.innerText = `Gagal mengirim review: ${error.message}`;
       }
+    });
+
+    // tambahkan event listener untuk hashchange
+    const handleHashChange = () => {
+      stopCamera();
+    };
+    window.addEventListener("hashchange", handleHashChange);
+
+    // Bersihkan event listener saat halaman di-unload
+    window.addEventListener("unload", () => {
+      window.removeEventListener("hashchange", handleHashChange);
     });
 
     // Inisialisasi peta

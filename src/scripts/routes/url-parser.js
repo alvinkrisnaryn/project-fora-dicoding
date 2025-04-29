@@ -1,7 +1,7 @@
 const UrlParser = {
   parseActiveUrl() {
     const urlSplit = this._urlSplitter(
-      window.location.hash.slice(1).toLowerCase()
+      window.location.hash.slice(1)
     );
     if (!urlSplit.length) {
       return { resource: null, id: null, verb: null };

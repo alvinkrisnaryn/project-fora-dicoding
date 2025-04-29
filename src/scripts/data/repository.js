@@ -36,7 +36,6 @@ export const loginUser = async (email, password) => {
       throw new Error(result.message || "Login gagal");
     }
     return result.loginResult.token; // <- token diambil dari hasil response
-    
   } catch (error) {
     console.error("Login error:", error);
     throw error;
@@ -82,19 +81,31 @@ export const postStoryWithLocation = async (formData) => {
 
 export const getStoryById = async (id) => {
   const token = localStorage.getItem("token");
+  console.log("Token:", token ? "Valid" : "Missing");
+  if (!token) {
+    throw new Error("Token tidak ditemukan. Silakan login.");
+  }
 
-  const response = await fetch(
-    `https://story-api.dicoding.dev/v1/stories/${id}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  try {
+    const response = await fetch(
+      `https://story-api.dicoding.dev/v1/stories/${id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const result = await response.json();
+    if (!response.ok) {
+      console.error("API error:", result.message);
+      return null; // Kembalikan null alih-alih melempar error
     }
-  );
 
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.message);
-
-  return result.story;
+    return result.story;
+  } catch (error) {
+    console.error("Fetch error:", error);
+    return null;
+  }
 };

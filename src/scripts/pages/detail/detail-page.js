@@ -13,17 +13,32 @@ const DetailPage = {
   async afterRender() {
     const url = UrlParser.parseActiveUrl();
     const id = url.id;
-    console.log("Detail Page ID:", id);
-    const story = await getStoryById(id);
+    console.log("Requested Story ID:", id); // Log ID
 
-    const container = document.getElementById("story-container");
-
-    if (!story) {
-      container.innerHTML = "<p>Gagal memuat data review.</p>";
+    if (!id || !id.startsWith("story-")) {
+      const container = document.getElementById("story-container");
+      container.innerHTML =
+        "<p>ID cerita tidak valid. Harus dimulai dengan 'story-'.</p>";
       return;
     }
 
-    container.innerHTML = `
+    const token = localStorage.getItem("token");
+    if (!token) {
+      const container = document.getElementById("story-container");
+      container.innerHTML = "<p>Silakan login terlebih dahulu.</p>";
+      return;
+    }
+    try {
+      const story = await getStoryById(id);
+      const container = document.getElementById("story-container");
+
+      if (!story) {
+        container.innerHTML =
+          "<p>Cerita tidak ditemukan. Pastikan ID cerita valid atau coba lagi nanti.</p>";
+        return;
+      }
+
+      container.innerHTML = `
       <h2>Detail Review</h2>
       <img src="${
         story.photoUrl
@@ -43,18 +58,23 @@ const DetailPage = {
       }
     `;
 
-    // ✅ Render peta jika ada koordinat
-    if (story.lat && story.lon) {
-      const map = L.map("map-detail").setView([story.lat, story.lon], 15);
+      // ✅ Render peta jika ada koordinat
+      if (story.lat && story.lon) {
+        const map = L.map("map-detail").setView([story.lat, story.lon], 15);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-      }).addTo(map);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
 
-      L.marker([story.lat, story.lon])
-        .addTo(map)
-        .bindPopup("Lokasi review ini")
-        .openPopup();
+        L.marker([story.lat, story.lon])
+          .addTo(map)
+          .bindPopup("Lokasi review ini")
+          .openPopup();
+      }
+    } catch (error) {
+      console.error("Error loading story:", error);
+      const container = document.getElementById("story-container");
+      container.innerHTML = `<p>Error: ${error.message}</p>`;
     }
   },
 };

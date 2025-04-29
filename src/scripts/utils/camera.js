@@ -2,6 +2,7 @@ let currentStream = null;
 
 export const initCamera = async (videoId) => {
   const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  currentStream = stream; // Simpan stream ke currentStream
   const video = document.getElementById(videoId);
   video.srcObject = stream;
 };
@@ -10,6 +11,11 @@ export const stopCamera = () => {
   if (currentStream) {
     currentStream.getTracks().forEach(track => track.stop());
     currentStream = null;
+    const video = document.getElementById("camera");
+    if (video) {
+      video.srcObject = null; // Bersihkan srcObject pada elemen video
+    }
+  } else {
   }
 };
 
