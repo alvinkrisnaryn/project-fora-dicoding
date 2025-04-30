@@ -1,3 +1,5 @@
+import '../../../styles/pages/login/login.css';
+
 const LoginPage = {
   async render() {
     const token = localStorage.getItem("token");
@@ -6,6 +8,7 @@ const LoginPage = {
       window.location.hash = "#/home";
       return "";
     }
+
 
     return `
       <section class="login-section">
@@ -16,6 +19,7 @@ const LoginPage = {
           <button type="submit">Login</button>
         </form>
         <p id="error-message" style="color:red;"></p>
+        <p>Belum punya akun? <a href="#/register" class="register-link">Daftar di sini</a></p>
       </section>
     `;
   },
