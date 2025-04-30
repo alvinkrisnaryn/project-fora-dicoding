@@ -3,6 +3,13 @@ import { initCamera, captureImage, stopCamera } from "../../utils/camera";
 
 const AddPage = {
   async render() {
+    // Periksa autentikasi
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.hash = "#/login";
+      return "";
+    }
+
     return `
       <section class="add-story">
         <h2>Tambah Review</h2>
@@ -40,6 +47,14 @@ const AddPage = {
   },
 
   async afterRender() {
+
+    // Periksa autentikasi (opsional, untuk keamanan tambahan)
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.hash = '#/login';
+      return;
+    }
+
     const form = document.getElementById("storyForm");
     const message = document.getElementById("submit-message");
 

@@ -2,6 +2,13 @@ import { registerUser } from "../../data/repository";
 
 const RegisterPage = {
   async render() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      console.log("Access denied to /register: Already logged in");
+      window.location.hash = "#/home";
+      return "";
+    }
+    
     return `
       <section class="register-section">
         <h2>Daftar Akun Baru</h2>

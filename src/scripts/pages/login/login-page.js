@@ -1,5 +1,12 @@
 const LoginPage = {
   async render() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      console.log("Access denied to /login: Already logged in");
+      window.location.hash = "#/home";
+      return "";
+    }
+
     return `
       <section class="login-section">
         <h2>Login ke Website Fora</h2>

@@ -18,14 +18,34 @@ const App = {
       return;
     }
     this.lastRoute = routeKey;
-    const page = routes[routeKey];
+    // Daftar rute yang memerlukan autentikasi
+    const protectedRoutes = ["/home", "/add", "/about", "/detail/:id"];
+    const isProtectedRoute =
+      protectedRoutes.includes(routeKey) || routeKey.startsWith("/detail/");
     const isAuthPage = url.resource === "login" || url.resource === "register";
+
+    // Alihkan ke /home jika sudah login dan mencoba akses login/register
+    if (isAuthPage && token) {
+      console.log("Redirecting to /home: Already logged in, token exists");
+      window.location.hash = '#/home';
+      return;
+    }
+
+    // Periksa autentikasi untuk rute yang dilindungi
+    if (isProtectedRoute && !token) {
+      console.log("Redirecting to login: No token for protected route", routeKey);
+      window.location.hash = "#/login";
+      return;
+    }
+
+    const page = routes[routeKey] || routes["/"]; // Default ke halaman utama jika rute
 
     // 🔴 Jalankan beforeLeave() halaman sebelumnya (kalau ada)
     if (this.previousPage?.beforeLeave) {
       await this.previousPage.beforeLeave();
     }
 
+    // kelola navbar
     if (!isAuthPage && navbar) {
       navbar.innerHTML = await Navbar.render();
       await Navbar.afterRender();
@@ -36,9 +56,9 @@ const App = {
     try {
       content.innerHTML = await page.render();
       await page.afterRender?.();
-      console.log("After render executed");
+      console.log("After render executed for route:", routeKey);
     } catch (error) {
-      console.error("Render error:", error);
+      console.error("Render error for route:", routeKey, ":", error);
       content.innerHTML = "<p>Error rendering page</p>";
     }
 

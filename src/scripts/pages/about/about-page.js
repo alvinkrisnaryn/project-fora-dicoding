@@ -1,5 +1,11 @@
 const AboutPage = {
   async render() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.hash = "#/login";
+      return "";
+    }
+
     return `
       <section class="about">
         <h2>Tentang Fora</h2>
