@@ -7,27 +7,33 @@ const AddPage = {
       <section class="add-story">
         <h2>Tambah Review</h2>
         <form id="storyForm">
+          <label for="description">Deskripsi Review</label>
           <textarea id="description" placeholder="Tulis review kamu di sini..." required></textarea>
-          <input type="file" id="photo" accept="image/*" />
+          
+          <label for="photo">Unggah Gambar (opsional jika tidak pakai kamera)</label>
+          <input type="file" id="photo" accept="image/*" aria-describedby="photo-desc" />
+          <p id="photo-desc" class="visually-hidden">Pilih satu gambar dari file atau gunakan kamera</p>
 
           <div class="camera-section">
-              <video id="camera" autoplay></video>
+              <video id="camera" autoplay aria-label>Tampilkan kamera langsung</video>
               <canvas id="snapshot" style="display: none;"></canvas>
-              <button type="button" id="captureButton">Ambil Foto</button>
+              <button type="button" id="captureButton" aria-label="Ambil foto dari kamera">Ambil Foto</button>
           </div>
 
           <div id="image-preview" style="margin-top:1em;">
             <h4>Preview Gambar:</h4>
-            <img id="preview-img" src="" alt="Preview" style="max-width: 100%; display: none;" />
+            <img id="preview-img" src="" alt="Preview gambar hasil kamera atau upload" style="max-width: 100%; display: none;" />
           </div>
 
           <button type="submit">Kirim</button>
         </form>
         <p id="submit-message"></p>
 
-        <div id="map" style="height: 300px; margin-top: 1em;"></div>
-        <input type="hidden" id="lat">
-        <input type="hidden" id="lon">
+        <div id="map" style="height: 300px; margin-top: 1em;" aria-label="Peta lokasi"></div>
+        
+        <input type="hidden" id="lat" aria-describedby="latlon-desc">
+        <input type="hidden" id="lon" aria-describedby="latlon-desc">
+        <p id="latlon-desc" class="visually-hidden">Klik pada peta untuk memilih lokasi review</p>
 
       </section>
     `;
@@ -125,11 +131,6 @@ const AddPage = {
       stopCamera();
     };
     window.addEventListener("hashchange", handleHashChange);
-
-    // Bersihkan event listener saat halaman di-unload
-    window.addEventListener("unload", () => {
-      window.removeEventListener("hashchange", handleHashChange);
-    });
 
     // Inisialisasi peta
     const map = L.map("map").setView([-6.2, 106.816666], 13); // default: Jakarta

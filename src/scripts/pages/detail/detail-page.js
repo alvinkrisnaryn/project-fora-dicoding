@@ -39,24 +39,28 @@ const DetailPage = {
       }
 
       container.innerHTML = `
-      <h2>Detail Review</h2>
-      <img src="${
-        story.photoUrl
-      }" alt="Foto review" style="max-width: 300px;" />
-      <h3>${story.name}</h3>
-      <p><strong>Deskripsi:</strong> ${story.description}</p>
-      <p><strong>Dibuat pada:</strong> ${new Date(
-        story.createdAt
-      ).toLocaleString()}</p>
-      ${
-        story.lat && story.lon
-          ? `
+  <article aria-label="Detail review pengguna">
+    <h1>Detail Review</h1>
+    <img 
+      src="${story.photoUrl}" 
+      alt="Foto review oleh ${story.name}" 
+      style="max-width: 300px;" 
+    />
+    <h2>${story.name}</h2>
+    <p><strong>Deskripsi:</strong> ${story.description}</p>
+    <p><strong>Dibuat pada:</strong> ${new Date(
+      story.createdAt
+    ).toLocaleString()}</p>
+    ${
+      story.lat && story.lon
+        ? `
         <p><strong>Lokasi:</strong> ${story.lat}, ${story.lon}</p>
         <div id="map-detail" style="height: 300px; margin-top: 1em;"></div>
       `
-          : `<p><em>Lokasi tidak tersedia</em></p>`
-      }
-    `;
+        : `<p><em>Lokasi tidak tersedia</em></p>`
+    }
+  </article>
+`;
 
       // ✅ Render peta jika ada koordinat
       if (story.lat && story.lon) {

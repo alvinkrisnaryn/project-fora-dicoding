@@ -13,7 +13,7 @@ const HomePage = {
         <h1>Selamat datang di Fora</h1>
         <h2>Review terbaru</h2>
         <p>Ini adalah halaman beranda dengan daftar tempat makan</p>
-        <div id="stories"></div>
+        <div id="stories" aria-label="Daftar review tempat makan"></div>
       </section>
     `;
   },
@@ -34,13 +34,17 @@ const HomePage = {
       storiesContainer.innerHTML = ""; // Kosongkan dulu untuk menghindari duplikasi
       stories.forEach((story) => {
         storiesContainer.innerHTML += `
-          <div class="story-card">
+          <article class="story-card">
             <a href="#/detail/${story.id}">
-              <img src="${story.photoUrl}" alt="${story.name}" width="200">
+              <img 
+                src="${story.photoUrl}" 
+                alt="Foto review oleh ${story.name}" 
+                width="200"
+              >
               <h3>${story.name}</h3>
             </a>
             <p>${story.description}</p>
-          </div>
+          </article>
         `;
       });
     } catch (error) {
