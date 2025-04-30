@@ -4,6 +4,7 @@ const Navbar = {
       <nav class="navbar" role="navigation" aria-label="Navigasi Utama">
         <ul class="navbar-list">
           <li><a href="#/home">Home</a></li>
+          <li><a href="#/add">Add</a></li>
           <li><a href="#/about">About</a></li>
         </ul>
         <button id="logoutButton" class=""logout-button>Logout</button>
