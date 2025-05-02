@@ -1,4 +1,5 @@
-import { getAllStories } from "../../data/repository.js";
+// home-page.js
+import HomePresenter from "./home-presenter.js"; // Import Presenter
 
 const HomePage = {
   async render() {
@@ -22,35 +23,52 @@ const HomePage = {
     const token = localStorage.getItem("token");
     if (!token) return;
 
+    // Inisialisasi Presenter dengan View (this)
+    const presenter = new HomePresenter({ view: this });
+    presenter.loadStories(); // Panggil Presenter untuk mengambil data
+  },
+
+  // Fungsi untuk menampilkan daftar stories
+  showStories(stories) {
     const storiesContainer = document.querySelector("#stories");
-    try {
-      const stories = await getAllStories();
+    storiesContainer.innerHTML = ""; // Kosongkan dulu
+    stories.forEach((story) => {
+      storiesContainer.innerHTML += `
+        <article class="story-card">
+          <a href="#/detail/${story.id}">
+            <img 
+              src="${story.photoUrl}" 
+              alt="Foto review oleh ${story.name}" 
+              width="200"
+            >
+            <h3>${story.name}</h3>
+          </a>
+          <p>${story.description}</p>
+          <p><small>Dibuat pada: ${new Date(story.createdAt).toLocaleString(
+            "id-ID",
+            {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }
+          )}</small></p>
+        </article>
+      `;
+    });
+  },
 
-      if (!stories || stories.length === 0) {
-        storiesContainer.innerHTML = "<p>Belum ada review</p>";
-        return;
-      }
+  // Fungsi untuk menampilkan pesan jika tidak ada stories
+  showNoStories() {
+    const storiesContainer = document.querySelector("#stories");
+    storiesContainer.innerHTML = "<p>Belum ada review</p>";
+  },
 
-      storiesContainer.innerHTML = ""; // Kosongkan dulu untuk menghindari duplikasi
-      stories.forEach((story) => {
-        storiesContainer.innerHTML += `
-          <article class="story-card">
-            <a href="#/detail/${story.id}">
-              <img 
-                src="${story.photoUrl}" 
-                alt="Foto review oleh ${story.name}" 
-                width="200"
-              >
-              <h3>${story.name}</h3>
-            </a>
-            <p>${story.description}</p>
-          </article>
-        `;
-      });
-    } catch (error) {
-      storiesContainer.innerHTML =
-        '<p style="color:red;">Gagal memuat review: ${error.message}</p>';
-    }
+  // Fungsi untuk menampilkan pesan error
+  showError(message) {
+    const storiesContainer = document.querySelector("#stories");
+    storiesContainer.innerHTML = `<p style="color:red;">Gagal memuat review: ${message}</p>`;
   },
 };
 
