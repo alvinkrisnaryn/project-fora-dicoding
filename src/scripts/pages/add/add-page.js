@@ -1,9 +1,8 @@
-import { postStoryWithLocation } from "../../data/repository";
+import AddPresenter from "./add-presenter.js";
 import { initCamera, captureImage, stopCamera } from "../../utils/camera";
 
 const AddPage = {
   async render() {
-    // Periksa autentikasi
     const token = localStorage.getItem("token");
     if (!token) {
       window.location.hash = "#/login";
@@ -41,40 +40,45 @@ const AddPage = {
         <input type="hidden" id="lat" aria-describedby="latlon-desc">
         <input type="hidden" id="lon" aria-describedby="latlon-desc">
         <p id="latlon-desc" class="visually-hidden">Klik pada peta untuk memilih lokasi review</p>
-
       </section>
     `;
   },
 
   async afterRender() {
-
-    // Periksa autentikasi (opsional, untuk keamanan tambahan)
     const token = localStorage.getItem("token");
     if (!token) {
-      window.location.hash = '#/login';
+      window.location.hash = "#/login";
       return;
     }
 
     const form = document.getElementById("storyForm");
     const message = document.getElementById("submit-message");
 
-    // Inisialisasi kamera saat halaman siap
-    await initCamera("camera");
+    try {
+      await initCamera("camera");
+    } catch (error) {
+      console.warn("Failed to initialize camera:", error);
+      if (message)
+        message.innerText =
+          "Gagal menginisialisasi kamera. Silahkan unggah gambar secara manual.";
+    }
 
     const fileInput = document.getElementById("photo");
     const captureButton = document.getElementById("captureButton");
 
     // Jika user ambil foto dari kamera, reset file upload
     captureButton.addEventListener("click", async () => {
-      const photoBlob = await captureImage("camera", "snapshot");
-      window.capturedPhotoBlob = photoBlob;
-
-      // Kosongkan file input
-      fileInput.value = "";
-
-      const previewImg = document.getElementById("preview-img");
-      previewImg.src = URL.createObjectURL(photoBlob);
-      previewImg.style.display = "block";
+      try {
+        const photoBlob = await captureImage("camera", "snapshot");
+        window.capturedPhotoBlob = photoBlob;
+        fileInput.value = "";
+        const previewImg = document.getElementById("preview-img");
+        previewImg.src = URL.createObjectURL(photoBlob);
+        previewImg.style.display = "block";
+      } catch (error) {
+        console.error("Error capturing image:", error);
+        message.innerText = "Gagal mengambil foto dari kamera.";
+      }
     });
 
     // Jika user upload file, reset hasil kamera
@@ -82,14 +86,30 @@ const AddPage = {
       window.capturedPhotoBlob = null;
       const file = fileInput.files[0];
       const previewImg = document.getElementById("preview-img");
-
-      if (file) {
-        previewImg.src = URL.createObjectURL(file);
-        previewImg.style.display = "block";
-      } else {
-        previewImg.style.display = "none";
+      if (previewImg) {
+        if (file) {
+          previewImg.src = URL.createObjectURL(file);
+          previewImg.style.display = "block";
+        } else {
+          preview.style.display = "none";
+        }
       }
     });
+
+    const presenter = new AddPresenter({ view: this });
+
+    const cleanup = async () => {
+      try {
+        const previewImg = document.getElementById("preview-img");
+        if (previewImg && previewImg.src) {
+          URL.revokeObjectURL(previewImg.src);
+          previewImg.src = "";
+          previewImg.style.display = "none";
+        }
+      } catch (error) {
+        console.warn("Error during cleanup:", error);
+      }
+    };
 
     // Tangani submit form
     form.addEventListener("submit", async (e) => {
@@ -123,60 +143,60 @@ const AddPage = {
       formData.append("lat", lat);
       formData.append("lon", lon);
 
-      try {
-        await postStoryWithLocation(formData);
-        message.innerText = "Berhasil mengirim review!";
-        stopCamera(); // Hentikan kamera sebelum navigasi
-        const previewImg = document.getElementById("preview-img");
-        if (previewImg.src) {
-          URL.revokeObjectURL(previewImg.src); // Bersihkan URL
-          previewImg.src = "";
-          previewImg.style.display = "none";
-        }
-        setTimeout(() => {
-          window.location.href = "#/home";
-        }, 1500);
-      } catch (error) {
-        message.innerText = `Gagal mengirim review: ${error.message}`;
-      }
+      await presenter.submitStory(formData, cleanup);
     });
 
     // tambahkan event listener untuk hashchange
     const handleHashChange = () => {
-      stopCamera();
+      try {
+        stopCamera();
+      } catch (error) {
+        console.warn("Error stopping camera on hashchange:", error);
+      }
     };
     window.addEventListener("hashchange", handleHashChange);
 
     // Inisialisasi peta
     const map = L.map("map").setView([-6.2, 106.816666], 13); // default: Jakarta
-
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
 
     let marker;
-
-    // Tangkap klik di peta
     map.on("click", (e) => {
       const { lat, lng } = e.latlng;
-
-      // Tampilkan marker
       if (marker) {
         marker.setLatLng([lat, lng]);
       } else {
         marker = L.marker([lat, lng]).addTo(map);
       }
-
-      // Simpan ke input hidden
       document.getElementById("lat").value = lat;
       document.getElementById("lon").value = lng;
     });
+
+    this.showSuccess = (messageText) => {
+      if (message) {
+        message.innerText = messageText;
+      } else {
+        console.error("Message element not found");
+      }
+    };
+
+    this.showError = (messageText) => {
+      if (message) {
+        message.innerText = messageText;
+      } else {
+        console.error("Message element not found");
+      }
+    };
   },
 
   async beforeLeave() {
-    // Fungsi ini akan dipanggil sebelum pindah halaman
-    const { stopCamera } = await import("../../utils/camera.js");
-    stopCamera();
+    try {
+      stopCamera();
+    } catch (error) {
+      console.warn("Error stopping camera on beforeLeave:", error);
+    }
   },
 };
 

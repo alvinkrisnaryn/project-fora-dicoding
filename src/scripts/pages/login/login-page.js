@@ -1,4 +1,5 @@
-import '../../../styles/pages/login/login.css';
+import "../../../styles/pages/login/login.css";
+import LoginPresenter from "./login-presenter";
 
 const LoginPage = {
   async render() {
@@ -9,17 +10,33 @@ const LoginPage = {
       return "";
     }
 
-
     return `
       <section class="login-section">
-        <h2>Login ke Website Fora</h2>
-        <form id="loginForm">
-          <input type="email" id="email" placeholder="Email" required />
-          <input type="password" id="password" placeholder="Password" required />
-          <button type="submit">Login</button>
-        </form>
-        <p id="error-message" style="color:red;"></p>
-        <p>Belum punya akun? <a href="#/register" class="register-link">Daftar di sini</a></p>
+        <fieldset>
+          <legend>Foraa</legend>
+          <h4>Welcome Back</h4>
+          <p>Sign in with your email address and password</p>
+          <form id="loginForm">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Email" required />
+            <p id="error-message" style="color:red;"></p>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Password" required />
+            <p id="error-message" style="color:red;"></p>
+
+            <div>
+             <input type="checkbox" id="remember" name="remember" />
+             <label for="remember">Ingat Saya</label>
+            </div>
+
+            <button type="submit">Login</button>
+          </form>
+
+          <div>
+            <p>Belum punya akun? <a href="#/register" class="register-link">Daftar di sini</a></p>
+          </div>
+        </fieldset>
       </section>
     `;
   },
@@ -28,46 +45,22 @@ const LoginPage = {
     const form = document.getElementById("loginForm");
     const errorMessage = document.getElementById("error-message");
 
+    const presenter = new LoginPresenter({ view: this });
+
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      try {
-        const response = await fetch(
-          "https://story-api.dicoding.dev/v1/login",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-          }
-        );
-
-        const result = await response.json();
-        console.log("Login Response:", result);
-
-        if (!response.ok) {
-          throw new Error(result.message);
-        }
-        if (result && result.loginResult && result.loginResult.token) {
-          localStorage.setItem("token", result.loginResult.token);
-          localStorage.setItem("name", result.loginResult.name);
-
-          window.location.hash = "#/home";
-          setTimeout(() => {
-            const appModule = require("../app");
-            appModule.default.renderPage();
-          }, 100);
-        } else {
-          throw new Error("Login gagal: ${error.message}");
-        }
-      } catch (error) {
-        errorMessage.textContent = `Login gagal: ${error.message}`;
-      }
+      await presenter.performLogin(email, password);
     });
+
+    this.showSuccess = () => {};
+
+    this.showError = (message) => {
+      errorMessage.textContent = message;
+    };
   },
 };
 

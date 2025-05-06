@@ -1,5 +1,7 @@
-/* src/styles/pages/login/login.css */
-.login-section {
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* .login-section {
+  font-family: 'Poppins', sans-serif;
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
@@ -8,41 +10,41 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+} */
 
-.login-section:hover {
+/* .login-section:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
+} */
 
-.login-section h2 {
+/* .login-section h2 {
   margin-bottom: 1.5rem;
   color: #2d3436;
   font-size: 1.8rem;
   font-weight: 600;
-}
+} */
 
-#loginForm {
+/* #loginForm {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
+} */
 
-#loginForm input {
+/* #loginForm input {
   padding: 0.85rem;
   border: 1px solid #dfe6e9;
   border-radius: 6px;
   font-size: 1rem;
   transition: border-color 0.3s ease;
-}
+} */
 
-#loginForm input:focus {
+/* #loginForm input:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
+} */
 
-#loginForm button {
+/* #loginForm button {
   padding: 0.85rem;
   background: #007bff;
   color: #ffffff;
@@ -52,37 +54,37 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.3s ease;
-}
+} */
 
-#loginForm button:hover {
+/* #loginForm button:hover {
   background: #0056b3;
-}
+} */
 
-#error-message {
+/* #error-message {
   min-height: 1.5rem;
   margin: 1rem 0;
   color: #d63031;
   font-size: 0.9rem;
-}
+} */
 
-.register-link {
+/* .register-link {
   color: #007bff;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
-}
+} */
 
-.register-link:hover {
+/* .register-link:hover {
   color: #0056b3;
   text-decoration: underline;
-}
+} */
 
 /* Animasi fade-in untuk form */
-.login-section {
+/* .login-section {
   animation: fadeIn 0.5s ease-in;
-}
+} */
 
-@keyframes fadeIn {
+/* @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -91,7 +93,7 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
+} */
 
 /* Responsivitas */
 @media (max-width: 480px) {

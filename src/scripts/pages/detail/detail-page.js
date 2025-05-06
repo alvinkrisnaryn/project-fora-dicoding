@@ -1,4 +1,5 @@
 import { getStoryById } from "../../data/repository";
+import DetailPresenter from "./detail.presenter";
 import UrlParser from "../../routes/url-parser";
 
 const DetailPage = {
@@ -19,7 +20,7 @@ const DetailPage = {
   async afterRender() {
     const url = UrlParser.parseActiveUrl();
     const id = url.id;
-    console.log("Requested Story ID:", id); // Log ID
+    console.log("Requested Story ID:", id);
 
     if (!id || !id.startsWith("story-")) {
       const container = document.getElementById("story-container");
@@ -28,58 +29,49 @@ const DetailPage = {
       return;
     }
 
-    try {
-      const story = await getStoryById(id);
-      const container = document.getElementById("story-container");
+    const presenter = new DetailPresenter({ view: this });
+    await presenter.loadStory(id);
+  },
 
-      if (!story) {
-        container.innerHTML =
-          "<p>Cerita tidak ditemukan. Pastikan ID cerita valid atau coba lagi nanti.</p>";
-        return;
-      }
-
-      container.innerHTML = `
-        <article aria-label="Detail review pengguna">
-          <h1>Detail Review</h1>
-          <img 
-            src="${story.photoUrl}" 
-            alt="Foto review oleh ${story.name}" 
-            style="max-width: 300px;" 
-          />
-          <h2>${story.name}</h2>
-          <p><strong>Deskripsi:</strong> ${story.description}</p>
-          <p><strong>Dibuat pada:</strong> ${new Date(
-            story.createdAt
-          ).toLocaleString()}</p>
-          ${
-            story.lat && story.lon
-              ? `
+  showStory(story) {
+    const container = document.getElementById("story-container");
+    container.innerHTML = `
+      <article aria-label="Detail review pengguna">
+        <h1>Detail Review</h1>
+        <img src="${story.photoUrl}" alt="Foto review oleh ${
+      story.name
+    }" style="max-width: 300px;" />
+        <h2>${story.name}</h2>
+        <p><strong>Deskripsi:</strong> ${story.description}</p>
+        <p><strong>Dibuat pada:</strong> ${new Date(
+          story.createdAt
+        ).toLocaleString()}</p>
+        ${
+          story.lat && story.lon
+            ? `
               <p><strong>Lokasi:</strong> ${story.lat}, ${story.lon}</p>
               <div id="map-detail" style="height: 300px; margin-top: 1em;"></div>
             `
-              : `<p><em>Lokasi tidak tersedia</em></p>`
-          }
-        </article>
-      `;
+            : `<p><em>Lokasi tidak tersedia</em></p>`
+        }
+      </article>
+    `;
 
-      // Render peta jika ada koordinat
-      if (story.lat && story.lon) {
-        const map = L.map("map-detail").setView([story.lat, story.lon], 15);
-
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "&copy; OpenStreetMap contributors",
-        }).addTo(map);
-
-        L.marker([story.lat, story.lon])
-          .addTo(map)
-          .bindPopup("Lokasi review ini")
-          .openPopup();
-      }
-    } catch (error) {
-      console.error("Error loading story:", error);
-      const container = document.getElementById("story-container");
-      container.innerHTML = `<p>Error: ${error.message}</p>`;
+    if (story.lat && story.lon) {
+      const map = L.map("map-detail").setView([story.lat, story.lon], 15);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+      }).addTo(map);
+      L.marker([story.lat, story.lon])
+        .addTo(map)
+        .bindPopup("Lokasi review ini")
+        .openPopup();
     }
+  },
+
+  showError(message) {
+    const container = document.getElementById("story-container");
+    container.innerHTML = `<p style="color: red;">${message}</p>`;
   },
 };
 

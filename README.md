@@ -80,6 +80,7 @@ Proyek starter ini dirancang agar kode tetap modular dan terorganisir.
 │   │   |   |   └── detail-page.js
 │   │   |   └── home/
 │   │   |   |   └── home-page.js
+│   │   |   |   └── home-presenter.js
 │   │   |   └── login/
 │   │   |   |   └── login-page.js
 │   │   └── app.js
@@ -96,6 +97,10 @@ Proyek starter ini dirancang agar kode tetap modular dan terorganisir.
 │   │   └── index.js
 │   │   └── main.js
 │   ├── styles/
+│   │   └── pages/
+│   │   |   └── login.css
+│   │   └── register/
+│   │   |   └── register.css
 │   │   └── styles.css
 │   └── index.html
 ├── .gitignore

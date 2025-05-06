@@ -1,4 +1,5 @@
 import { registerUser } from "../../data/repository";
+import RegisterPresenter from "./register-presenter";
 
 const RegisterPage = {
   async render() {
@@ -8,7 +9,7 @@ const RegisterPage = {
       window.location.hash = "#/home";
       return "";
     }
-    
+
     return `
       <section class="register-section">
         <h2>Daftar Akun Baru</h2>
@@ -34,16 +35,25 @@ const RegisterPage = {
       const email = form.email.value;
       const password = form.password.value;
 
-      try {
-        await registerUser(name, email, password);
-        messageContainer.innerText = "Registrasi berhasil! Silakan login.";
-        setTimeout(() => {
+      await presenter.registerNewUser(name, email, password);
+
+      setTimeout(() => {
+        if (
+          messageContainer.innerText === "Register berhasil! Silahkan login."
+        ) {
           window.location.hash = "/login";
-        }, 1500);
-      } catch (error) {
-        messageContainer.innerText = "Gagal daftar. Coba lagi ya.";
-      }
+        }
+      }, 1500);
     });
+
+    // tambahkan metode view
+    this.showSuccess = (message) => {
+      messageContainer.innerHTML = message;
+    };
+
+    this.showError = (message) => {
+      messageContainer.innerHTML = message;
+    };
   },
 };
 

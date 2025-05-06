@@ -7,7 +7,7 @@ const Navbar = {
           <li><a href="#/add">Add</a></li>
           <li><a href="#/about">About</a></li>
         </ul>
-        <button id="logoutButton" class=""logout-button>Logout</button>
+        <button id="logoutButton" class=""logout-button style="width: 44px; height: 44px; cursor: pointer; background-color: red">Logout</button>
       </nav>
     `;
   },
