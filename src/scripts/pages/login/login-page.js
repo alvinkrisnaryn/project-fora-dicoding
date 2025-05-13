@@ -12,31 +12,33 @@ const LoginPage = {
 
     return `
       <section class="login-section">
-        <fieldset>
-          <legend>Foraa</legend>
-          <h4>Welcome Back</h4>
-          <p>Sign in with your email address and password</p>
-          <form id="loginForm">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" placeholder="Email" required />
-            <p id="error-message" style="color:red;"></p>
-
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Password" required />
-            <p id="error-message" style="color:red;"></p>
-
-            <div>
-             <input type="checkbox" id="remember" name="remember" />
-             <label for="remember">Ingat Saya</label>
+        <div class="background-wrapper">
+          <div class="form-login">
+            <fieldset>
+              <legend>Foraa</legend>
+              <h3>Welcome Back</h5>
+              <p>Sign in with your email address and password</p>
+              <form id="loginForm">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Email" required />
+                <p id="error-message" style="color:red;"></p>
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Password" required />
+                <div class="login-option">
+                  <label>
+                    <input type="checkbox" id="remember" name="remember" />
+                    Remember me
+                  </label>
+                  <a href="#" id="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="button-login">Sign In</button>
+              </form>
+            <div class="register">
+              <p>Don't have an account? <a href="#/register" class="register-link">Sign Up</a></p>
             </div>
-
-            <button type="submit">Login</button>
-          </form>
-
-          <div>
-            <p>Belum punya akun? <a href="#/register" class="register-link">Daftar di sini</a></p>
+            </fieldset>
           </div>
-        </fieldset>
+        </div>
       </section>
     `;
   },

@@ -41,14 +41,15 @@ body {
   color: #007bff;
 }
 
-#main-content {
+.content {
   padding: 2em;
   max-width: 800px;
 }
 
-section {
+/* section {
   margin-bottom: 2rem;
-}
+} */
+
 h1,
 h2 {
   margin-bottom: 1rem;

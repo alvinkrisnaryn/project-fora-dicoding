@@ -50,7 +50,10 @@ Proyek starter ini dirancang agar kode tetap modular dan terorganisir.
 
 ├── dist/
 │   ├── images/
+│   │   └── favicon.png
 │   │   └── logo.png
+│   ├── img-login/
+│   │   └── image-login.jpg
 │   └── app.bundle.js
 │   └── app.bundle.js.LICENSI.txt
 │   └── app.css

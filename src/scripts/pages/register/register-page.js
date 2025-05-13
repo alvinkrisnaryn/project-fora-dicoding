@@ -1,4 +1,4 @@
-import { registerUser } from "../../data/repository";
+import "../../../styles/pages/register/register.css";
 import RegisterPresenter from "./register-presenter";
 
 const RegisterPage = {
@@ -12,14 +12,16 @@ const RegisterPage = {
 
     return `
       <section class="register-section">
-        <h2>Daftar Akun Baru</h2>
-        <form id="register-form">
-          <input type="text" id="name" placeholder="Nama Lengkap" required />
-          <input type="email" id="email" placeholder="Email" required />
-          <input type="password" id="password" placeholder="Password" required />
-          <button type="submit">Daftar</button>
-        </form>
-        <div id="register-message"></div>
+        <div class="background-wrapper">
+          <h2>Daftar Akun Baru</h2>
+          <form id="register-form">
+            <input type="text" id="name" placeholder="Nama Lengkap" required />
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="password" id="password" placeholder="Password" required />
+            <button type="submit">Daftar</button>
+            <span id="register-message"></span>
+          </form>
+        </div>
       </section>
     `;
   },
@@ -28,6 +30,17 @@ const RegisterPage = {
     const form = document.getElementById("register-form");
     const messageContainer = document.getElementById("register-message");
 
+    const view = {
+      showSuccess(message) {
+        messageContainer.innerHTML = message;
+      },
+      showError(message) {
+        messageContainer.innerHTML = message;
+      },
+    };
+
+    const presenter = new RegisterPresenter({ view });
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -35,25 +48,17 @@ const RegisterPage = {
       const email = form.email.value;
       const password = form.password.value;
 
+      if (password.length < 8) {
+        view.showError("Kata sandi harus minimal 8 karakter.");
+        return;
+      }
+      if (!email.includes("@") || !email.includes(".")) {
+        view.showError("Email tidak valid.");
+        return;
+      }
+
       await presenter.registerNewUser(name, email, password);
-
-      setTimeout(() => {
-        if (
-          messageContainer.innerText === "Register berhasil! Silahkan login."
-        ) {
-          window.location.hash = "/login";
-        }
-      }, 1500);
     });
-
-    // tambahkan metode view
-    this.showSuccess = (message) => {
-      messageContainer.innerHTML = message;
-    };
-
-    this.showError = (message) => {
-      messageContainer.innerHTML = message;
-    };
   },
 };
 
