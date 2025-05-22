@@ -4,8 +4,8 @@ const HomePage = {
   async render() {
     const token = localStorage.getItem("token");
     if (!token) {
-      window.location.replace("#/login"); // Gunakan replace untuk menghindari history stack
-      return ""; // Jangan tampilkan apa pun, biarkan App.renderPage menangani
+      window.location.replace("#/login");
+      return "";
     }
 
     return `
