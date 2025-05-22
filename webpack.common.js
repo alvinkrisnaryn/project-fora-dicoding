@@ -16,6 +16,10 @@ module.exports = {
         test: /\.(png|jpe?g|gif)$/i,
         type: "asset/resource",
       },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
   plugins: [
@@ -27,6 +31,10 @@ module.exports = {
         {
           from: path.resolve(__dirname, "src/public/"),
           to: path.resolve(__dirname, "dist/"),
+        },
+        {
+          from: path.resolve(__dirname, "src/service-worker.js"),
+          to: path.resolve(__dirname, "dist/service-worker.js"),
         },
       ],
     }),

@@ -1,11 +1,16 @@
-// home-presenter.js
 import { getAllStories } from "../../data/repository.js";
+import { subscribeToPushNotification } from "../../utils/notification.js";
 
 export default class HomePresenter {
   #view;
 
   constructor({ view }) {
     this.#view = view;
+  }
+
+  async init() {
+    await this.loadStories();
+    await subscribeToPushNotification();
   }
 
   async loadStories() {
