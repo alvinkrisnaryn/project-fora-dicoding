@@ -1,3 +1,5 @@
+import { initializePush } from "../../main.js";
+
 const Navbar = {
   async render() {
     return `
@@ -25,6 +27,12 @@ const Navbar = {
         localStorage.removeItem("name");
         window.location.href = "#/login";
       });
+    }
+
+    // Tambahkan ini agar tombol subscription siap digunakan
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      const registration = await navigator.serviceWorker.ready;
+      initializePush(registration);
     }
   },
 };

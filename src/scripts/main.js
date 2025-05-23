@@ -36,22 +36,23 @@ async function initializePush(registration) {
     return;
   }
 
+  // Hindari menambahkan listener lebih dari satu kali
+  if (subscriptionButton.dataset.listenerAttached === "true") return;
+  subscriptionButton.dataset.listenerAttached = "true";
+
   // Periksa status langganan saat ini
   const subscription = await registration.pushManager.getSubscription();
   updateButton(subscription);
 
   // Tambahkan event listener untuk tombol
   subscriptionButton.addEventListener("click", async () => {
-    if (subscriptionButton.classList.contains("subscribed")) {
-      // Unsubscribe
-      const currentSubscription =
-        await registration.pushManager.getSubscription();
-      if (currentSubscription) {
-        await currentSubscription.unsubscribe();
-        updateButton(null);
-      }
-    } else {
-      // Subscribe
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.warn("Token tidak ditemukan.");
+      return;
+    }
+
+    if (!subscriptionButton.classList.contains("subscribed")) {
       const applicationServerKey = urlBase64ToUint8Array(
         "BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk"
       );
@@ -61,14 +62,60 @@ async function initializePush(registration) {
       });
       updateButton(newSubscription);
 
-      // Kirim langgana ke server
-      await fetch("/subscribe", {
+      const subscriptionData = {
+        endpoint: newSubscription.endpoint,
+        keys: {
+          p256dh: newSubscription.toJSON().keys.p256dh,
+          auth: newSubscription.toJSON().keys.auth,
+        },
+      };
+
+      await fetch("/notifications/subscribe", {
         method: "POST",
         body: JSON.stringify(newSubscription),
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(subscriptionData),
       });
+
+      if (Notification.permission === "granted") {
+        const notif = new Notification("Langganan berhasil", {
+          body: "Anda telah berlangganan notifikasi.",
+          icon: "/images/logo.png",
+          badge: "/images/favicon.png",
+          requireInteraction: false,
+        });
+        setTimeout(() => notif.close(), 5000);
+      }
+    } else {
+      const currentSubscription =
+        await registration.pushManager.getSubscription();
+      if (currentSubscription) {
+        const endpoint = currentSubscription.endpoint;
+        await fetch("/notifications/unsubscribe", {
+          method: "DELETE",
+          header: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ endpoint }),
+        });
+
+        await currentSubscription.unsubscribe();
+        updateButton(null);
+
+        if (Notification.permission === "granted") {
+          const notif = new Notification("Berhasil Unsubscribe", {
+            body: "Anda telah berhenti langganan notifikasi.",
+            icon: "/images/logo.png",
+            badge: "/images/favicon.png",
+            requireInteraction: false,
+          });
+          setTimeout(() => notif.close(), 5000);
+        }
+      }
     }
   });
 }
@@ -76,7 +123,7 @@ async function initializePush(registration) {
 function updateButton(subscription) {
   const subscriptionButton = document.getElementById("subscriptionButton");
   if (subscription) {
-    subscriptionButton.textContent = "UNSUBCRIBE";
+    subscriptionButton.textContent = "UNSUBSCRIBE";
     subscriptionButton.classList.add("subscribed");
   } else {
     subscriptionButton.textContent = "SUBSCRIBE";
@@ -94,3 +141,5 @@ function urlBase64ToUint8Array(base64String) {
   }
   return outputArray;
 }
+
+export { initializePush };
