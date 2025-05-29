@@ -87,7 +87,7 @@ Proyek starter ini dirancang agar kode tetap modular dan terorganisir.
 │ │ | └── register/
 │ │ | | └── register-page.js
 │ │ | | └── register-presenter.js
-│ │ └── app.js
+│ │ │ └── app.js
 │ │ └── routes/
 │ │ | └── routes.js
 │ │ | └── url-parser.js
