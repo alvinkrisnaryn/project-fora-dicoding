@@ -8,7 +8,14 @@ module.exports = merge(common, {
     rules: [], // Aturan CSS dihapus karena sudah ada di webpack.common.js
   },
   devServer: {
-    static: path.resolve(__dirname, "dist"),
+    static: {
+      directory: path.resolve(__dirname, "dist"),
+      publicPath: "/",
+    },
+    historyApiFallback: {
+      index: "/index.html",
+      rewrites: [{ from: /.*/, to: "/index.html" }],
+    },
     host: "0.0.0.0",
     port: 8080,
     client: {

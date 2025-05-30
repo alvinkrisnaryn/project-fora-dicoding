@@ -107,3 +107,17 @@ h2 {
     opacity: 0;
   }
 }
+
+#offline {
+  color: red;
+  text-align: center;
+  padding: 1rem;
+  background-color: #ffe6e6;
+}
+
+@media (display-mode: standalone) {
+  body {
+    padding-top: 0;
+    margin-top: 0;
+  }
+}

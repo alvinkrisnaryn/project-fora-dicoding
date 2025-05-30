@@ -1,11 +1,16 @@
+const path = require("path");
 const common = require("./webpack.common.js");
 const { merge } = require("webpack-merge");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = merge(common, {
   mode: "production",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].[contenthash].bundle.js",
+    publicPath: "/",
+  },
   module: {
     rules: [
       {
@@ -26,14 +31,5 @@ module.exports = merge(common, {
       },
     ],
   },
-  plugins: [
-    new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin(),
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: "src/public", to: "public" },
-        { from: "src/service-worker.js", to: "service-worker.js" },
-      ],
-    }),
-  ],
+  plugins: [new CleanWebpackPlugin(), new MiniCssExtractPlugin()],
 });

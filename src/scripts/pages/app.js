@@ -8,16 +8,24 @@ const App = {
 
   async renderPage() {
     const token = localStorage.getItem("token");
-    console.log("Token exists:", !!token);
     const url = UrlParser.parseActiveUrl();
+
+    // Ambil elemen-elemen yang dibutuhkan
     const content = document.querySelector("#main-content");
     const navbar = document.querySelector("#navbar");
+    if (!content) {
+      console.error("Element #main-content not found");
+      return;
+    }
 
     const routeKey = UrlParser.parseActiveUrlWithCombiner(); // untuk cocokkan ke routes
-    if (routeKey === this.lastRoute) {
+    console.log("Route key:", routeKey);
+    if (routeKey === this.lastRoute && !token) {
+      console.log("Skipping render: Same route as lastRoute");
       return;
     }
     this.lastRoute = routeKey;
+
     // Daftar rute yang memerlukan autentikasi
     const protectedRoutes = ["/home", "/add", "/about", "/detail/:id"];
     const isProtectedRoute =
@@ -26,19 +34,20 @@ const App = {
 
     // Alihkan ke /home jika sudah login dan mencoba akses login/register
     if (isAuthPage && token) {
-      console.log("Redirecting to /home: Already logged in, token exists");
-      window.location.hash = '#/home';
+      window.location.hash = "/home";
+      await this.renderPage();
       return;
     }
 
     // Periksa autentikasi untuk rute yang dilindungi
     if (isProtectedRoute && !token) {
-      console.log("Redirecting to login: No token for protected route", routeKey);
-      window.location.hash = "#/login";
+      window.location.hash = "/login";
+      await this.renderPage();
       return;
     }
 
-    const page = routes[routeKey] || routes["/"]; // Default ke halaman utama jika rute
+    const page = routes[routeKey] || routes["/home"]; // Default ke halaman utama jika rute
+    console.log("Selected page:", page);
 
     // 🔴 Jalankan beforeLeave() halaman sebelumnya (kalau ada)
     if (this.previousPage?.beforeLeave) {
@@ -50,15 +59,14 @@ const App = {
       navbar.innerHTML = await Navbar.render();
       await Navbar.afterRender();
     } else {
-      navbar.innerHTML = ""; // sembunyikan navbar di halaman login/register
+      if (navbar) navbar.innerHTML = ""; // sembunyikan navbar di halaman login/register
     }
+
     content.innerHTML = ""; // Kosongkan konten sebelum render
     try {
       content.innerHTML = await page.render();
       await page.afterRender?.();
-      console.log("After render executed for route:", routeKey);
     } catch (error) {
-      console.error("Render error for route:", routeKey, ":", error);
       content.innerHTML = "<p>Error rendering page</p>";
     }
 

@@ -8,25 +8,45 @@ window.addEventListener("hashchange", () => {
 window.addEventListener("load", () => {
   App.renderPage();
 
+  // Deteksi status offline dan online
+  window.addEventListener("online", () => {
+    const offlineMessage = document.getElementById("offline");
+    if (offlineMessage) {
+      offlineMessage.style.display = "none";
+      App.renderPage();
+    }
+  });
+
+  window.addEventListener("offline", () => {
+    const offlineMessage = document.getElementById("offline");
+    if (onlineMessage) {
+      offlineMessage.style.display = "block";
+      App.renderPage();
+    }
+  });
+
   // Pastilkan DOM siap sebelum inisialisasi push
-  if ("serviceWorker" in navigator && "PushManager" in window) {
-    navigator.serviceWorker
-      .register("/service-worker.js")
-      .then((registration) => {
-        console.log("Service Worker registered:", registration);
-        // Tunggu hingga DOM diperbarui oleh App.renderPage()
-        requestAnimationFrame(() => {
-          initializePush(registration);
+  document.addEventListener("DOMContentLoaded", () => {
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((registration) => {
+          console.log("Service Worker registered:", registration);
+          console.log("Service Worker scope:", registration.scope);
+          // Tunggu hingga DOM diperbarui oleh App.renderPage()
+          requestAnimationFrame(() => {
+            initializePush(registration);
+          });
+        })
+        .catch((error) => {
+          console.error("Service Worker registration failed:", error);
         });
-      })
-      .catch((error) => {
-        console.error("Service Worker registration failed:", error);
-      });
-  } else {
-    console.warn("Push notification tidak mendukung di browser ini.");
-    const subscribeButton = document.getElementById("subscriptionButton");
-    if (subscribeButton) subscribeButton.disabled = true;
-  }
+    } else {
+      console.warn("Push notification tidak mendukung di browser ini.");
+      const subscribeButton = document.getElementById("subscriptionButton");
+      if (subscribeButton) subscribeButton.disabled = true;
+    }
+  });
 });
 
 async function initializePush(registration) {

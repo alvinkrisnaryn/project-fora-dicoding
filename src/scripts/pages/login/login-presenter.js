@@ -1,4 +1,5 @@
 import { loginUser } from "../../data/repository.js";
+import App from "../app.js";
 
 export default class LoginPresenter {
   #view;
@@ -13,9 +14,8 @@ export default class LoginPresenter {
       localStorage.setItem("token", token);
       localStorage.setItem("name", "User"); // Sesuaikan dengan response jika ada name
       this.#view.showSuccess();
-      setTimeout(() => {
-        window.location.hash = "#/home";
-      }, 100);
+      window.location.hash = "/home";
+      App.renderPage();
     } catch (error) {
       this.#view.showError(`Login gagal: ${error.message}`);
     }

@@ -6,5 +6,7 @@ export async function withViewTransition(callback) {
   }
 
   // Jalankan transisi halus
-  await document.startViewTransition(callback);
+  document.startViewTransition(() => {
+    callback();
+  });
 }

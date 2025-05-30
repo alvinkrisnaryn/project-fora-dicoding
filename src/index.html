@@ -8,8 +8,10 @@
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2d7719">
+    <link rel="manifest" href="/public/manifest.json" />
+    <link rel="icon" href="/public/images/favicon.png" type="image/png" />
+    <link rel="logo" href="/public/images/logo.png" type="image/png" />
+    <meta name="theme-color" content="#2d7719" />
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <title>Fora | Food Rate</title>
@@ -26,6 +28,9 @@
     </header>
     <main>
       <div id="main-content" tabindex="-1"></div>
+      <div id="offline" style="display: none">
+        <p>Kamu sedang offline. Beberapa fitur mungkin terbatas.</p>
+      </div>
     </main>
   </body>
 </html>

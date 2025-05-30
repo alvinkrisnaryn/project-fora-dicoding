@@ -58,7 +58,9 @@ const LoginPage = {
       await presenter.performLogin(email, password);
     });
 
-    this.showSuccess = () => {};
+    this.showSuccess = () => {
+      console.log("Login success");
+    };
 
     this.showError = (message) => {
       errorMessage.textContent = message;

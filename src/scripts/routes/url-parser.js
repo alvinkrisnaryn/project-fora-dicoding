@@ -4,11 +4,11 @@ const UrlParser = {
       window.location.hash.slice(1)
     );
     if (!urlSplit.length) {
-      return { resource: null, id: null, verb: null };
+      return { resource: 'home', id: null, verb: null };
     }
 
     return {
-      resource: urlSplit[0] || null,
+      resource: urlSplit[0] || 'home',
       id: urlSplit[1] || null,
       verb: urlSplit[2] || null,
     };

@@ -164,6 +164,7 @@
     "hyperdyperid": "^1.2.0",
     "iconv-lite": "^0.4.24",
     "icss-utils": "^5.1.0",
+    "idb": "^8.0.3",
     "import-local": "^3.2.0",
     "inflight": "^1.0.6",
     "inherits": "^2.0.4",
