@@ -19,10 +19,14 @@ export default class HomePresenter {
       if (!stories || stories.length === 0) {
         this.#view.showNoStories();
       } else {
-        this.#view.showStories(stories);
+        this.#view.showStories(stories, false); // false: data dari API
       }
     } catch (error) {
-      this.#view.showError(error.message);
+      if (error.message === "No stories available offline") {
+        this.#view.showNoStories();
+      } else {
+        this.#view.showStories(await getAllStories(), true); // true: data dari cache
+      }
     }
   }
 }

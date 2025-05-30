@@ -43,20 +43,16 @@ const HomePage = {
   },
 
   // Fungsi untuk menampilkan daftar stories
-  showStories(stories) {
+  showStories(stories, isOffline = false) {
     const storiesContainer = document.querySelector("#stories");
     storiesContainer.innerHTML = ""; // Kosongkan dulu
     const loadingElement = document.querySelector("#loading");
     if (loadingElement) loadingElement.remove(); // Hapus indikator loading
 
-    // Reset marker di peta
-    if (this.map) {
-      this.map.eachLayer((layer) => {
-        if (layer instanceof L.Marker) {
-          this.map.removeLayer(layer);
-        }
-      });
+    if (isOffline) {
+      storiesContainer.innerHTML = `<p aria-label="Mode Offline">Data diambil dari cache offline</p>`;
     }
+    y;
 
     // Batasi ke 10 story pertama jika diperlukan
     const limitedStories = stories.slice(0, 10);
@@ -85,13 +81,6 @@ const HomePage = {
           )}</small></p>
         </article>
       `;
-
-      // Tambahkan marker ke peta jika lat dan lon tersedia
-      if (story.lat && story.lon && this.map) {
-        L.marker([story.lat, story.lon])
-          .addTo(this.map)
-          .bindPopup(`<b>${story.name}</b><br>${story.description}`);
-      }
 
       // Tambahkan marker ke peta jika lat dan lon tersedia
       if (story.lat && story.lon && this.map) {

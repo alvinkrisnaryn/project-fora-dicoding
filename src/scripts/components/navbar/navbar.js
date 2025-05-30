@@ -1,4 +1,4 @@
-import { initializePush } from "../../main.js";
+import { initializePush } from "../../utils/notification.js";
 
 const Navbar = {
   async render() {

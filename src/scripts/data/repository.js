@@ -1,3 +1,9 @@
+import {
+  saveStories,
+  getAllStories as getCachedStories,
+  clearOldStories,
+} from "../utils/indexedDB.js";
+
 const BASE_URL = "https://story-api.dicoding.dev/v1";
 
 export const registerUser = async (name, email, password) => {
@@ -55,11 +61,23 @@ export const getAllStories = async () => {
     }
 
     const result = await response.json();
-    console.log("Data stories:", result);
+    console.log("Data stories:", result.listStory);
+
+    // Simpan ke IndexedDB
+    await saveStories(result.listStory);
+    // Bersihkan data lama (> 7 hari)
+    await clearOldStories(7);
+
     return result.listStory;
   } catch (error) {
     console.error("Error fetching stories:", error);
-    throw error;
+    // Fallback ke IndexedDB
+    const cachedStories = await getCachedStories();
+    if (cachedStories && cachedStories.length > 0) {
+      console.log("Using cached stories:", cachedStories);
+      return cachedStories;
+    }
+    throw new Error("No stories available offline");
   }
 };
 

@@ -1,3 +1,5 @@
+import { getAllStories } from "./scripts/utils/indexedDB.js";
+
 const CACHE_NAME = "fora-app-v1";
 const urlsToCache = [
   "/",
@@ -49,23 +51,34 @@ self.addEventListener("activate", (event) => {
 
 // Event fetch: Layani dari cache untuk aset statis, fetch untuk API
 self.addEventListener("fetch", (e) => {
-  if (e.request.url.includes("story-api.dicoding.dev")) {
+  if (e.request.url.includes("story-api.dicoding.dev/stories")) {
     e.respondWith(
       caches.open("api-cache").then((cache) => {
-        return cache.match(e.request).then((response) => {
-          // Hanya fetch dan kembalikan respons, jangan simpan untuk POST
-          return fetch(e.request)
-            .then((networkResponse) => {
-              // Jika ingin cache, pastikan hanya untuk GET
-              if (e.request.method === "POST") {
-                cache.put(e.request, networkResponse.clone());
+        return fetch(e.request)
+          .then((networkResponse) => {
+            if (e.request.method === "GET") {
+              cache.put(e.request, networkResponse.clone());
+            }
+            return networkResponse;
+          })
+          .catch(async () => {
+            const cachedResponse = await cache.match(e.request);
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            // Fallback ke IndexedDB
+            try {
+              const stories = await getAllStories();
+              if (stories && stories.length > 0) {
+                return new Response(JSON.stringify({ listStory: stories }), {
+                  headers: { "Content-Type": "application/json" },
+                });
               }
-              return networkResponse;
-            })
-            .catch(
-              () => response || new Response("API unavailable", { status: 503 })
-            );
-        });
+            } catch (error) {
+              console.error("IndexedDB fallback failed:", error);
+            }
+            return new Response("API unavailable", { status: 503 });
+          });
       })
     );
   } else {
