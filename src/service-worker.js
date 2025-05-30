@@ -2,9 +2,11 @@ const CACHE_NAME = "fora-app-v1";
 const urlsToCache = [
   "/",
   "/index.html",
-  "/public/images/logo.png",
-  "/public/images/favicon.png",
-  "/public/manifest.json",
+  "/[name].[contenthash].css",
+  "/[name].[contenthash].bundle.js",
+  "./images/logo.png",
+  "./images/favicon.png",
+  "/manifest.json",
   // Tambahkan aset lain yang diperlukan, misalnya font atau gambar di public/
 ];
 
@@ -46,34 +48,35 @@ self.addEventListener("activate", (event) => {
 });
 
 // Event fetch: Layani dari cache untuk aset statis, fetch untuk API
-self.addEventListener("fetch", (event) => {
-  if (event.request.url.includes("story-api.dicoding.dev")) {
-    event.respondWith(
-      caches.open("api-cache").then((cache) =>
-        cache.match(event.request).then((cachedResponse) => {
-          const fetchPromise = fetch(event.request)
+self.addEventListener("fetch", (e) => {
+  if (e.request.url.includes("story-api.dicoding.dev")) {
+    e.respondWith(
+      caches.open("api-cache").then((cache) => {
+        return cache.match(e.request).then((response) => {
+          // Hanya fetch dan kembalikan respons, jangan simpan untuk POST
+          return fetch(e.request)
             .then((networkResponse) => {
-              cache.put(event.request, networkResponse.clone());
+              // Jika ingin cache, pastikan hanya untuk GET
+              if (e.request.method === "POST") {
+                cache.put(e.request, networkResponse.clone());
+              }
               return networkResponse;
             })
             .catch(
-              () =>
-                cachedResponse ||
-                new Response("API unavailable", { status: 503 })
+              () => response || new Response("API unavailable", { status: 503 })
             );
-          return cachedResponse || fetchPromise;
-        })
-      )
+        });
+      })
     );
   } else {
-    event.respondWith(
-      caches.match(event.request).then(
-        (response) =>
-          response ||
-          fetch(event.request).catch(
-            () => caches.match("/index.html") // Fallback ke index.html
-          )
-      )
+    e.respondWith(
+      caches
+        .match(e.request)
+        .then(
+          (response) =>
+            response ||
+            fetch(e.request).catch(() => caches.match("/index.html"))
+        )
     );
   }
 });

@@ -1,11 +1,16 @@
+const BASE_URL = "https://story-api.dicoding.dev/v1";
+
 import App from "./pages/app";
 import "../styles/styles.css";
 import { withViewTransition } from "./utils/view-transition.js";
 
 window.addEventListener("hashchange", () => {
+  console.log("Hashchange event triggered");
   withViewTransition(() => App.renderPage());
 });
+
 window.addEventListener("load", () => {
+  console.log("Window Loaded, rendering page...");
   App.renderPage();
 
   // Deteksi status offline dan online
@@ -19,7 +24,7 @@ window.addEventListener("load", () => {
 
   window.addEventListener("offline", () => {
     const offlineMessage = document.getElementById("offline");
-    if (onlineMessage) {
+    if (offlineMessage) {
       offlineMessage.style.display = "block";
       App.renderPage();
     }
@@ -27,6 +32,7 @@ window.addEventListener("load", () => {
 
   // Pastilkan DOM siap sebelum inisialisasi push
   document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded, registering service worker");
     if ("serviceWorker" in navigator && "PushManager" in window) {
       navigator.serviceWorker
         .register("/service-worker.js")
@@ -90,14 +96,20 @@ async function initializePush(registration) {
         },
       };
 
-      await fetch("/notifications/subscribe", {
+      await fetch(`${BASE_URL}notifications/subscribe`, {
         method: "POST",
         body: JSON.stringify(newSubscription),
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(subscriptionData),
+        body: JSON.stringify({
+          endpoint: subscription.endpoint,
+          keys: {
+            p256dh: subscription.toJSON().keys.p256dh,
+            auth: subscription.toJSON().keys.auth,
+          },
+        }),
       });
 
       if (Notification.permission === "granted") {
@@ -114,13 +126,13 @@ async function initializePush(registration) {
         await registration.pushManager.getSubscription();
       if (currentSubscription) {
         const endpoint = currentSubscription.endpoint;
-        await fetch("/notifications/unsubscribe", {
+        await fetch(`${BASE_URL}/notifications/unsubscribe`, {
           method: "DELETE",
           header: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ endpoint }),
+          body: JSON.stringify({ endpoint: subscription.endpoint }),
         });
 
         await currentSubscription.unsubscribe();

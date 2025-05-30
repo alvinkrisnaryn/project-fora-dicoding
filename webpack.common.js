@@ -7,7 +7,7 @@ module.exports = {
     app: path.resolve(__dirname, "./src/scripts/main.js"),
   },
   output: {
-    filename: "[name].bundle.js",
+    filename: "[name].[contenthash].bundle.js",
     path: path.resolve(__dirname, "dist"),
     publicPath: "/",
   },
@@ -25,11 +25,13 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "src/index.html"),
+      template: './src/index.html',
+      filename: 'index.html',
+      inject: true,
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: "src/public", to: "public" },
+        { from: "src/public", to: "" },
         { from: "src/service-worker.js", to: "service-worker.js" },
       ],
     }),

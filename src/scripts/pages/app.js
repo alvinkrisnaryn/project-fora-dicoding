@@ -68,6 +68,7 @@ const App = {
       await page.afterRender?.();
     } catch (error) {
       content.innerHTML = "<p>Error rendering page</p>";
+      console.error('Rendering error:', error); 
     }
 
     this.previousPage = page;
