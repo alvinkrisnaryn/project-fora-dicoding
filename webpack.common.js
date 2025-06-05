@@ -21,12 +21,21 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/index.html"),
+      filename: "index.html",
     }),
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "src/public/"),
-          to: path.resolve(__dirname, "dist/"),
+          from: path.resolve(__dirname, "src/public/images/"),
+          to: "images",
+        },
+        {
+          from: path.resolve(__dirname, "src/service-worker.js"),
+          to: "service-worker.js",
+        },
+        {
+          from: path.resolve(__dirname, "src/manifest.json"),
+          to: "manifest.json",
         },
       ],
     }),

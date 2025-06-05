@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Leaflet CSS -->
+    <title>Fora | Food Rate</title>
+    <link rel="manifest" href="manifest.json" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <title>Fora | Food Rate</title>
   </head>
   <body>
     <a
@@ -19,9 +18,11 @@
       onclick="document.getElementById('main-content').focus(); return false;"
       >Lewati ke konten utama</a
     >
+
     <header>
       <div id="navbar"></div>
     </header>
+
     <main>
       <div id="main-content" tabindex="-1"></div>
     </main>
