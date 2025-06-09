@@ -1,3 +1,5 @@
+import { urlBase64ToUint8Array } from "./utils.js";
+
 async function initNotification() {
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
     console.warn("Push messaging tidak didukung di browser ini.");
@@ -5,6 +7,11 @@ async function initNotification() {
   }
 
   try {
+    const swResponse = await fetch("/service-worker.js");
+    if (!swResponse.ok) {
+      throw new Error("Service worker tidak ditemukan atau tidak valid.");
+    }
+
     const registration = await navigator.serviceWorker.register(
       "/service-worker.js"
     );
@@ -20,7 +27,7 @@ async function initNotification() {
 
     const subscription = await readyRegistration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint9Array(
+      applicationServerKey: urlBase64ToUint8Array(
         "BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk"
       ),
     });
@@ -63,13 +70,6 @@ async function sendSubcriptionToServer(subscription) {
   } catch (err) {
     console.error("Gagal mengirim data subscription ke server:", err);
   }
-}
-
-function urlBase64ToUint9Array(base64String) {
-  const padding = "=".repeat((4 - (base64String.lenght % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const rawData = atob(base64);
-  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
 
 export default initNotification;
