@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap);
 :root {
   --primary-color: #2d7719;
   --text-dark: #545454;
@@ -19,7 +21,7 @@ body {
 
 @font-face {
   font-family: "Res Publica";
-  src: url(/751e211120f69dc0faf0.ttf) format("truetype");
+  src: url(751e211120f69dc0faf0.ttf) format("truetype");
   font-weight: normal;
   font-style: normal;
 }
@@ -35,7 +37,7 @@ body {
 }
 
 .background-wrapper {
-  background-image: url(/ea896ea71ab45c47d0fe.jpg);
+  background-image: url(ea896ea71ab45c47d0fe.jpg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -369,20 +371,6 @@ h2 {
   }
   to {
     opacity: 0;
-  }
-}
-
-#offline {
-  color: red;
-  text-align: center;
-  padding: 1rem;
-  background-color: #ffe6e6;
-}
-
-@media (display-mode: standalone) {
-  body {
-    padding-top: 0;
-    margin-top: 0;
   }
 }
 

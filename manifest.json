@@ -1,22 +1,21 @@
 {
-  "name": "Food Rate Application",
-  "short_name": "Food Rate App",
-  "description": "Aplikasi review makanan berbasis PWA untuk Dicoding",
-  "start_url": "/",
+  "name": "Fora | Food Rate",
+  "short_name": "FORA",
+  "description": "Food Rate App",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2d7719",
+  "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "/images/icon-192.png",
+      "src": "/images/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/images/icon-512.png",
+      "src": "/images/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "scope": "/"
+  ]
 }
