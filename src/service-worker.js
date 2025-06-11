@@ -1,4 +1,4 @@
-const CACHE_NAME = "fora-cache-v3";
+const CACHE_NAME = "fora-cache-v4";
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",
@@ -13,8 +13,8 @@ self.addEventListener("install", (event) => {
   console.log("[SW] Install");
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("[SW] Caching assets:", ASSETS_TO_CAHCE);
-      return cache.addAll(ASSETS_TO_CAHCE).catch((err) => {
+      console.log("[SW] Caching assets:", ASSETS_TO_CACHE);
+      return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
         console.error("[SW] Error caching assets:", err);
         throw err;
       });
