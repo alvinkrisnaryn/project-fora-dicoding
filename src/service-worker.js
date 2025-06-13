@@ -1,12 +1,12 @@
-const CACHE_NAME = "fora-cache-v4";
+const CACHE_NAME = "fora-cache-v5";
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",
   "/app.bundle.js",
   "/app.css",
   "/images/icon.png",
-  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
-  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css",
+  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js ",
 ];
 
 self.addEventListener("install", (event) => {

@@ -40,6 +40,22 @@ const HomePage = {
     // Inisialisasi Presenter dengan View (this)
     const presenter = new HomePresenter({ view: this });
     presenter.loadStories(); // Panggil Presenter untuk mengambil data
+
+    // Event listener untuk tombol hapus
+    document
+      .querySelector("#stories")
+      .addEventListener("click", async (event) => {
+        if (event.target.classList.contains("delete-btn")) {
+          const id = event.target.getAttribute("data-id");
+
+          const Idb = (await import("../../data/idb.js")).default;
+          await Idb.deleteStory(id);
+
+          // Hapus elemen dari DOM
+          const card = event.target.closest(".story-card");
+          if (card) card.remove();
+        }
+      });
   },
 
   // Fungsi untuk menampilkan daftar stories
@@ -83,6 +99,7 @@ const HomePage = {
               minute: "2-digit",
             }
           )}</small></p>
+          <button class="delete-btn" data-id="${story.id}">Hapus</button>
         </article>
       `;
 
