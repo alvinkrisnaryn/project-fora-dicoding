@@ -5,6 +5,7 @@ const Navbar = {
         <ul class="navbar-list">
           <li><a href="#/home">Home</a></li>
           <li><a href="#/add">Add</a></li>
+          <li><a href="#/favorites">Favorit</a></li>
           <li><a href="#/about">About</a></li>
         </ul>
         <button id="notifToggle" style="cursor: pointer; margin-right: 8px;">Loading...</button>
@@ -24,7 +25,6 @@ const Navbar = {
       const currentSub = await reg.pushManager.getSubscription();
 
       if (!currentSub) {
-        // Subscribe
         const newSub = await reg.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(
@@ -45,7 +45,6 @@ const Navbar = {
         toggleBtn.textContent = "UNSUBSCRIBE";
         await sendSubscriptionToServer(newSub);
       } else {
-        // Unsubscribe
         await currentSub.unsubscribe();
 
         const notif = new Notification("Berhenti Berlangganan", {

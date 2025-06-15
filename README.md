@@ -67,6 +67,7 @@ Proyek starter ini dirancang agar kode tetap modular dan terorganisir.
 │ │ | | └── review-card.js
 │ │ └── data/
 │ │ | └── api.js
+│ │ | └── idb.js
 │ │ | └── repository.js
 │ │ └── pages/
 │ │ | └── about/

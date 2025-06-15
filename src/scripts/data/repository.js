@@ -1,3 +1,5 @@
+import Idb from "./idb.js";
+
 const BASE_URL = "https://story-api.dicoding.dev/v1";
 
 export const registerUser = async (name, email, password) => {
@@ -55,11 +57,21 @@ export const getAllStories = async () => {
     }
 
     const result = await response.json();
-    console.log("Data stories:", result);
-    return result.listStory;
+    const stories = result.listStory;
+
+    // Perbarui IndexedDB dengan mempertahankan status isFavorite
+    for (const story of stories) {
+      const existingStory = await Idb.getStory(story.id);
+      await Idb.putStory({
+        ...story,
+        isFavorite: existingStory?.isFavorite || false,
+      });
+    }
+
+    return stories;
   } catch (error) {
     console.error("Error fetching stories:", error);
-    throw error;
+    return await Idb.getAllStories();
   }
 };
 
@@ -100,12 +112,50 @@ export const getStoryById = async (id) => {
     const result = await response.json();
     if (!response.ok) {
       console.error("API error:", result.message);
-      return null; // Kembalikan null alih-alih melempar error
+      const story = await Idb.getStory(id);
+      if (!story) {
+        throw new Error("Story tidak ditemukan di IndexedDB.");
+      }
+      return story;
     }
 
-    return result.story;
+    const story = result.story;
+    const existingStory = await Idb.getStory(id);
+    await Idb.putStory({
+      ...story,
+      isFavorite: existingStory?.isFavorite || false,
+    });
+    return story;
   } catch (error) {
     console.error("Fetch error:", error);
-    return null;
+    const story = await Idb.getStory(id);
+    if (!story) {
+      throw new Error("Story tidak ditemukan di IndexedDB.");
+    }
+    return story;
+  }
+};
+
+export const toggleFavoriteStory = async (id) => {
+  try {
+    const story = await Idb.getStory(id);
+    if (!story) {
+      throw new Error("Story tidak ditemukan di IndexedDB");
+    }
+    const isFavorite = !story.isFavorite;
+    await Idb.setFavoriteStory(id, isFavorite);
+    return isFavorite;
+  } catch (error) {
+    console.error("Error toggling favorite:", error);
+    throw error;
+  }
+};
+
+export const getFavoriteStories = async () => {
+  try {
+    return await Idb.getFavoriteStories();
+  } catch (error) {
+    console.error("Error fetching favorite stories:", error);
+    return [];
   }
 };

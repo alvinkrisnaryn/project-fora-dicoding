@@ -3,6 +3,7 @@ const { merge } = require("webpack-merge");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
 const path = require("path");
 
 module.exports = merge(common, {
@@ -30,14 +31,14 @@ module.exports = merge(common, {
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
+    new WorkboxWebpackPlugin.InjectManifest({
+      swSrc: path.resolve(__dirname, "src/service-worker.js"),
+      swDest: "service-worker.js",
+    }),
     new CopyWebpackPlugin({
       patterns: [
         {
           from: path.resolve(__dirname, "src/manifest.json"),
-          to: "",
-        },
-        {
-          from: path.resolve(__dirname, "src/service-worker.js"),
           to: "",
         },
         {

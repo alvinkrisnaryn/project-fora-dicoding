@@ -25,6 +25,21 @@ const Idb = {
   async deleteStory(id) {
     return (await dbPromise).delete(STORE_NAME, id);
   },
+
+  async setFavoriteStory(id, isFavorite) {
+    const db = await dbPromise;
+    const story = await db.get(STORE_NAME, id);
+    if (story) {
+      story.isFavorite = isFavorite;
+      return db.put(STORE_NAME, story);
+    }
+    return null;
+  },
+
+  async getFavoriteStories() {
+    const stories = await (await dbPromise).getAll(STORE_NAME);
+    return stories.filter((story) => story.isFavorite === true);
+  },
 };
 
 export default Idb;

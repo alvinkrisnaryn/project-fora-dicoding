@@ -1,4 +1,10 @@
-const CACHE_NAME = "fora-cache-v5";
+importScripts(
+  "https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js"
+);
+
+workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
+
+const CACHE_NAME = "fora-cache-v10";
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",

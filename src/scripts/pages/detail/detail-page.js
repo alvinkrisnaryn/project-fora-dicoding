@@ -13,6 +13,7 @@ const DetailPage = {
     return `
       <section class="story-detail">
         <div id="story-container">Loading...</div>
+        <button id="favorite-button" class="favorite-button">Tambah ke Favorit</button>
       </section>
     `;
   },
@@ -29,8 +30,14 @@ const DetailPage = {
       return;
     }
 
-    const presenter = new DetailPresenter({ view: this });
-    await presenter.loadStory(id);
+    try {
+      const presenter = new DetailPresenter({ view: this });
+      await presenter.loadStory(id);
+    } catch (error) {
+      console.error("Error initializing detail page:", error);
+      const container = document.getElementById("story-container");
+      container.innerHTML = `<p style="color: red;">Gagal memuat halaman: ${error.message}</p>`;
+    }
   },
 
   showStory(story) {
@@ -67,11 +74,27 @@ const DetailPage = {
         .bindPopup("Lokasi review ini")
         .openPopup();
     }
+    this.updateFavoriteButton(story.isFavorite || false);
   },
 
   showError(message) {
     const container = document.getElementById("story-container");
     container.innerHTML = `<p style="color: red;">${message}</p>`;
+  },
+  bindFavoriteButton(handler) {
+    const button = document.getElementById("favorite-button");
+    if (button) {
+      button.addEventListener("click", handler);
+    }
+  },
+
+  updateFavoriteButton(isFavorite) {
+    const button = document.getElementById("favorite-button");
+    if (button) {
+      button.textContent = isFavorite
+        ? "Hapus dari Favorit"
+        : "Tambah ke Favorit";
+    }
   },
 };
 

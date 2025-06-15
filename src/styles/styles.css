@@ -107,3 +107,43 @@ h2 {
     opacity: 0;
   }
 }
+
+.favorite-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  font-size: 1rem;
+}
+
+.favorite-button:hover {
+  background-color: #cc0000;
+}
+
+.review-card {
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+}
+
+.favorites-section {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.favorites-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.favorites-list p {
+  text-align: center;
+  width: 100%;
+  color: #666;
+}
