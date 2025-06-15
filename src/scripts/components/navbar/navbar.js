@@ -1,3 +1,9 @@
+import {
+  urlBase64ToUint8Array,
+  sendSubscriptionToServer,
+  unsubscribeFromServer,
+} from "../../utils/utils.js";
+
 const Navbar = {
   async render() {
     return `
@@ -25,6 +31,14 @@ const Navbar = {
       const currentSub = await reg.pushManager.getSubscription();
 
       if (!currentSub) {
+        if (Notification.permission !== "granted") {
+          const permission = await Notification.requestPermission();
+          if (permission !== "granted") {
+            console.warn("Izin notifikasi ditolak.");
+            return;
+          }
+        }
+
         const newSub = await reg.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(
@@ -46,6 +60,7 @@ const Navbar = {
         await sendSubscriptionToServer(newSub);
       } else {
         await currentSub.unsubscribe();
+        await unsubscribeFromServer(currentSub);
 
         const notif = new Notification("Berhenti Berlangganan", {
           body: "Kamu tidak akan menerima notifikasi lagi.",
@@ -65,64 +80,6 @@ const Navbar = {
       localStorage.removeItem("token");
       window.location.href = "#/login";
     });
-
-    function urlBase64ToUint8Array(base64String) {
-      const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-      const base64 = (base64String + padding)
-        .replace(/-/g, "+")
-        .replace(/_/g, "/");
-      const rawData = atob(base64);
-      return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
-    }
-
-    async function sendSubscriptionToServer(subscription) {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const body = {
-        endpoint: subscription.endpoint,
-        keys: subscription.toJSON().keys,
-      };
-
-      try {
-        await fetch(
-          "https://story-api.dicoding.dev/v1/notifications/subscribe",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-          }
-        );
-      } catch (e) {
-        console.error("Gagal mengirim subscription ke server", e);
-      }
-    }
-
-    async function unsubscribeFromServer(subscription) {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        await fetch(
-          "https://story-api.dicoding.dev/v1/notifications/subscribe",
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              endpoint: subscription.endpoint,
-            }),
-          }
-        );
-      } catch (e) {
-        console.error("Gagal unsubscribe dari server", e);
-      }
-    }
   },
 };
 

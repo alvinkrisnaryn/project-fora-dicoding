@@ -1,4 +1,4 @@
-import { urlBase64ToUint8Array } from "./utils.js";
+import { urlBase64ToUint8Array, sendSubscriptionToServer } from "./utils.js";
 
 async function initNotification() {
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
@@ -33,42 +33,9 @@ async function initNotification() {
     });
 
     console.log("User is subscribed:", subscription);
-    await sendSubcriptionToServer(subscription);
+    await sendSubscriptionToServer(subscription);
   } catch (error) {
     console.error("Gagal menginisialisasi notifikasi:", error);
-  }
-}
-
-async function sendSubcriptionToServer(subscription) {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    console.warn("User belum login, langganan notifikasi dibatalkan.");
-    return;
-  }
-
-  const body = {
-    endpoint: subscription.endpoint,
-    keys: subscription.toJSON().keys,
-  };
-
-  try {
-    const response = await fetch(
-      "https://story-api.dicoding.dev/v1/notifications/subscribe",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
-
-    const result = await response.json();
-    console.log("Notifikasi berhasil disubscribe ke server:", result);
-  } catch (err) {
-    console.error("Gagal mengirim data subscription ke server:", err);
   }
 }
 
